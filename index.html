@@ -1,0 +1,140 @@
+<!--<!doctype HTML>
+<html>
+<head>
+<script src="https://aframe.io/releases/0.6.1/aframe.min.js"></script>
+<script src="https://rawgit.com/donmccurdy/aframe-extras/master/dist/aframe-extras.loaders.min.js"></script>
+<script src="https://cdn.rawgit.com/jeromeetienne/AR.js/1.5.0/aframe/build/aframe-ar.js"> </script>
+<link rel="shortcut icon" href="favicon.ico"></head>
+  <body style='margin : 0px; overflow: hidden;'>
+    <a-scene stats embedded arjs='trackingMethod: best; debugUIEnabled: false'>
+  	<a-marker preset="hiro">
+      <a-box position='0 1 0' material='color: red;'>
+        <a-animation attribute="position"
+          dur="2000"
+          direction="alternate"
+          from="0 1 0"
+          to="0 3 0"
+          repeat="indefinite"></a-animation>
+      </a-box>
+      </a-entity>
+  	</a-marker>
+  	<a-entity camera></a-entity>
+    </a-scene>
+  </body>
+</html>-->
+<!doctype html>
+<html>
+  <head>
+    <title>
+    U&I kickstarter invitation
+    </title>
+    <meta name="viewport" content="width=device-width, height=device-height">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+        <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+     
+        <script src="https://aframe.io/releases/0.8.2/aframe.min.js"></script>
+        <script src="https://cdn.rawgit.com/jeromeetienne/AR.js/1.5.5/aframe/build/aframe-ar.js"></script>
+    <script>
+      AFRAME.registerComponent('video-vidhandler',{
+        init: function(){
+          console.log("video init");
+          this.toggle=false;
+          this.video=document.querySelector("#invi");
+          this.video.pause();
+        },
+        tick: function(){
+          if(this.el.object3D.visible==true)
+          {
+            if(!this.toggle)
+            {
+              this.toggle=true;
+              this.video.play();
+            }
+            else{
+              this.toggle=false ;
+              this.video.pause();
+            }
+          }
+        }
+      });
+      AFRAME.registerComponent('clock-text',{
+        init:function(){
+          console.log("clock init");
+          var el =this.el;
+          this.ready=false;
+          el.addEventListener('textfontset', function() {
+    	            	this.ready = true;
+		    }.bind(this));
+        },
+        tick: function(){
+          var el=this.el
+          if(!this.ready){
+            return
+          }
+          var et=new Date("June 29, 2020 09:00:00").getTime();
+          var timerem;
+          var timer= setInterval(function(){
+            var ct=new Date().getTime();
+            var diff=et-ct;
+            if(diff>0){
+              var days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                            var hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                            var mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                            var secs = Math.floor((diff % (1000 * 60)) / 1000);
+                            console.log(days, hours, mins, secs);
+                            var timeRem = days + " days " + hours + " hrs " + mins + " mins " + secs + " secs ";
+            }
+            else{
+              var timeRem="Finally, the day has arrived."
+            }
+            el.setAttribute('value',timeRem);
+          },1000)
+          }
+        }
+      });
+      AFRAME.registerComponent('mappoint-handler',{
+        init:function(){
+          var m3=document.querySelector("#m3");
+          var im=document.querySelector("#location");
+          m3.addEventListener('click', function(ev, target) {
+		        const intersectedElement = ev && ev.detail && ev.detail.intersectedEl;
+			if (im && intersectedElement === im) {
+			    console.log("Clicked");
+			    document.location.href = "https://goo.gl/maps/KiBKe6aakWai8MdYA";
+			}
+		    }
+        }
+      })
+    </script>
+  </head>
+  <body>
+  <a-scene id="scene" arjs='trackingMethod: best; debugUIEnabled: false;' vr-mode-ui="enabled: false" ar-template>
+  <a-assets>
+    <video preload="none" id="invi" response-type="arraybuffer" loop="false" crossorigin webkit-playsinline playsinline controls>
+    <source src="video.mp4">
+    </video>
+    <img id="location" src="map.png">
+    <img id="clock" src="texture.jpg">
+    <a-entity camera>
+    </a-entity>
+  </a-assets>
+  <a-marker id="m1" type="pattern" url="pattern-U&I.patt" video-vidhandler>
+    <a-plane scale = "4 2" position="0 0.1 0" rotation="-90 0 0" material="transparent:true;src:#invi" controls></a-plane>
+
+  </a-marker>
+  <a-marker id="m2" type="pattern" url="pattern-countdowm.patt" >
+    <a-plane position="0 0.1 0" rotation="-90 0 0" material="src:#clock" scale="2 1">
+      <a-text id="timer" clock-text value="00:00:00:00" width="1.5" height="1" position="-0.451 0.041 0.000" color="#FFFFFF"></a-text>
+    </a-plane>
+  </a-marker>
+  <a-marker id="m3" type="pattern" url="pattern-location.patt" emitevents="true" cursor="rayOrigin: mouse" mappoint-handler>
+  <a-plane scale = "2 2" position="0 0.1 0" rotation="-90 0 0" material="src:#location">
+
+  </a-plane>
+  </a-marker>
+  </a-scene>
+  </body>
+</html>
+
